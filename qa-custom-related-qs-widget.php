@@ -27,7 +27,7 @@ class qa_custom_related_qs
         // 関連する質問
         $questions = $this->get_related_questions($userid, $questionid);
         $titlehtml = qa_lang_html(count($questions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
-        $this->output_related_questions($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions);
+        $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions);
         
         // おなじ季節の質問
         $questions = $this->get_seasonal_questions();
@@ -53,10 +53,23 @@ class qa_custom_related_qs
     
     function get_seasonal_questions()
     {
-        return array();
+        $month = date("m");
+        $day= date("j");
+        $day = floor($day/10);
+        if($day == 3) {
+            $day  = 2;
+        }
+        $date = '%-' . $month . '-' . $day . '%';
+
+        $userid = '1';
+        $selectspec=qa_db_posts_basic_selectspec($userid);
+        $selectspec['source'] .=" WHERE type='Q'";
+        $selectspec['source'] .= " AND ^posts.created like '" . $date . "' ORDER BY RAND() LIMIT 5";
+        $questions=qa_db_single_select($selectspec);
+        return $questions;
     }
     
-    function output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml, $questionid)
+    function output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml, $questions)
     {
         if ($region == 'side') {
             $themeobject->output(
