@@ -24,10 +24,14 @@ class qa_custom_related_qs
         $userid = qa_get_logged_in_userid();
         $cookieid = qa_cookie_get();
         
-        $this->output_related_questions($userid, $questionid, $cookieid, $region, $place, $themeobject);
+        // 関連する質問
+        $this->output_related_questions($region, $place, $themeobject, $userid, $questionid, $cookieid);
+        
+        // おなじ季節の質問
+        $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid);
     }
     
-    function output_related_questions($userid, $questionid, $cookieid, $region, $place, $themeobject)
+    function output_related_questions($region, $place, $themeobject, $userid, $questionid, $cookieid)
     {
         
         $questions = qa_db_single_select(qa_db_related_qs_selectspec($userid, $questionid, 15));
@@ -91,5 +95,37 @@ class qa_custom_related_qs
 
             $themeobject->q_list_and_form($q_list);
         }
+    }
+    
+    function output_questions_widget($region, $place, $themeobject, $userid, $cookieid)
+    {
+        $title = '同じ季節の質問';
+        $questions = $this->getSeasonalQuestions();
+        $titlehtml = $title;
+        $themeobject->output( '<h2>', $titlehtml, '</h2>');
+        $q_list=array(
+                'form' => array(
+                    'tags' => 'method="post" action="'.qa_self_html().'"',
+
+                    'hidden' => array(
+                        'code' => qa_get_form_security_code('vote'),
+                    ),
+                ),
+
+                'qs' => array(),
+            );
+        $defaults=qa_post_html_defaults('Q');
+        $usershtml=qa_userids_handles_html($questions);
+
+        foreach ($questions as $question) {
+            $q_list['qs'][]=qa_post_html_fields($question, $userid, $cookieid, $usershtml, null, qa_post_html_options($question, $defaults));
+        }    
+
+        $themeobject->q_list_and_form($q_list);
+    }
+    
+    function getSeasonalQuestions()
+    {
+        return array();
     }
 }
