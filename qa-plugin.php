@@ -17,3 +17,5 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
     header('Location: ../../');
     exit;
 }
+
+qa_register_plugin_module('widget','qa-custom-related-qs-widget.php','qa_custom_related_qs','Custom Related Questions');
