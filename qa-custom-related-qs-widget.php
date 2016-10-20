@@ -23,16 +23,30 @@ class qa_custom_related_qs
 
         $userid = qa_get_logged_in_userid();
         $cookieid = qa_cookie_get();
-        
+                
         // 関連する質問
-        $questions = $this->get_related_questions($userid, $questionid);
-        $titlehtml = qa_lang_html(count($questions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
-        $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions);
+        $rquestions = $this->get_related_questions($userid, $questionid);
+        $titlehtml = qa_lang_html(count($rquestions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
+        $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $rquestions);
         
         // おなじ季節の質問
-        $questions = $this->get_seasonal_questions();
-        $titlehtml = '同じ季節の質問';;
-        $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions);
+        $squestions = $this->get_seasonal_questions($userid);
+        $titlehtml = '同じ季節の質問';
+        $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $squestions);
+        
+        // 最近の質問
+        $questions = $this->get_recent_questions($userid);
+        $titlehtml = qa_lang_html('main/recent_qs_title');
+        if (infinite_scroll_available()) {
+            // 無限スクロールが使用できる場合
+            $themeobject->output('<div class="qa-qlist-recent">');
+            $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions);
+            $themeobject->output('</div>');
+            $this->output_pagelinks($themeobject);
+            if (strpos(qa_opt('site_theme'), 'q2a-material-lite') !== false) {
+                $themeobject->output('<div class="ias-spinner" style="align:center;"><span class="mdl-spinner mdl-js-spinner is-active" style="height:20px;width:20px;"></span></div>');
+            }
+        }
     }
     
     function get_related_questions($userid, $questionid)
@@ -51,7 +65,7 @@ class qa_custom_related_qs
     }
     
     
-    function get_seasonal_questions()
+    function get_seasonal_questions($userid = null)
     {
         $month = date("m");
         $day= date("j");
@@ -61,11 +75,24 @@ class qa_custom_related_qs
         }
         $date = '%-' . $month . '-' . $day . '%';
 
-        $userid = '1';
+        // $userid = '1';
         $selectspec=qa_db_posts_basic_selectspec($userid);
         $selectspec['source'] .=" WHERE type='Q'";
         $selectspec['source'] .= " AND ^posts.created like '" . $date . "' ORDER BY RAND() LIMIT 5";
         $questions=qa_db_single_select($selectspec);
+        return $questions;
+    }
+    
+    function get_recent_questions($userid = null)
+    {
+        require_once QA_INCLUDE_DIR.'db/selects.php';
+        
+        $selectsort='created';
+        $start=qa_get_start();
+        
+        $selectspec = qa_db_qs_selectspec($userid, $selectsort, $start, null, null, false, false, 5);
+        
+        $questions = qa_db_single_select($selectspec);
         return $questions;
     }
     
@@ -120,5 +147,18 @@ class qa_custom_related_qs
 
             $themeobject->q_list_and_form($q_list);
         }
+    }
+    
+    function output_pagelinks($themeobject)
+    {
+        $start = qa_get_start();
+        $page_links = qa_html_page_links(qa_request(), $start, 5, qa_opt('cache_qcount'), qa_opt('pages_prev_next'), array());
+        $themeobject->output('<div class="qa-page-links">');
+
+        $themeobject->page_links_label($page_links['label']);
+        $themeobject->page_links_list($page_links['items']);
+        $themeobject->page_links_clear();
+
+        $themeobject->output('</div>');
     }
 }
