@@ -5,7 +5,7 @@ $(function(){
       var ias = $(".mdl-layout__content").ias({
         container: ".qa-qlist-recent .qa-q-list"
         ,item: ".qa-q-list-item"
-        ,pagination: ".qa-page-links-list"
+        ,pagination: ".qa-page-links"
         ,next: ".qa-page-next"
         ,delay: 600
       });
