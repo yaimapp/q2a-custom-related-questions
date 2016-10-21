@@ -51,17 +51,18 @@ class qa_custom_related_qs
     
     function get_related_questions($userid, $questionid)
     {
-        $questions = qa_db_single_select(qa_db_related_qs_selectspec($userid, $questionid, 15));
-
+        $selectspec = qa_db_related_qs_selectspec($userid, $questionid);
         $minscore = qa_match_to_min_score(qa_opt('match_related_qs'));
         $minacount = 2;
+        $listcount = 5;
+        $selectspec['source'] .= ' WHERE ^posts.acount >= # AND y.score >= # LIMIT #';
+        $selectspec['arguments'][] = $minacount;
+        $selectspec['arguments'][] = $minscore;
+        $selectspec['arguments'][] = $listcount;
+        $questions = qa_db_single_select($selectspec);
         
-        foreach ($questions as $key => $question) {
-            if ($question['score'] < $minscore || $question['acount'] < $minacount) {
-                unset($questions[$key]);
-            }
-        }
-        return array_slice($questions, 0, 5);
+        return $questions;
+        // return array_slice($questions, 0, 5);
     }
     
     
