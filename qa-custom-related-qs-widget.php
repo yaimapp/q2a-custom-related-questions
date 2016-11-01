@@ -40,12 +40,14 @@ class qa_custom_related_qs
         if (infinite_scroll_available()) {
             // 無限スクロールが使用できる場合
             $themeobject->output('<div class="qa-qlist-recent">');
-            $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions);
+            $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions, false);
             $themeobject->output('</div>');
             $this->output_pagelinks($themeobject);
             if (strpos(qa_opt('site_theme'), 'q2a-material-lite') !== false) {
                 $themeobject->output('<div class="ias-spinner" style="align:center;"><span class="mdl-spinner mdl-js-spinner is-active" style="height:20px;width:20px;"></span></div>');
             }
+        } else {
+            $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions, false);
         }
     }
     
@@ -54,7 +56,7 @@ class qa_custom_related_qs
         $selectspec = qa_db_related_qs_selectspec($userid, $questionid);
         $minscore = qa_match_to_min_score(qa_opt('match_related_qs'));
         $minacount = 2;
-        $listcount = 5;
+        $listcount = 10;
         $selectspec['source'] .= ' WHERE ^posts.acount >= # AND y.score >= # LIMIT #';
         $selectspec['arguments'][] = $minacount;
         $selectspec['arguments'][] = $minscore;
@@ -79,7 +81,7 @@ class qa_custom_related_qs
         // $userid = '1';
         $selectspec=qa_db_posts_basic_selectspec($userid);
         $selectspec['source'] .=" WHERE type='Q'";
-        $selectspec['source'] .= " AND ^posts.created like '" . $date . "' ORDER BY RAND() LIMIT 5";
+        $selectspec['source'] .= " AND ^posts.created like '" . $date . "' ORDER BY RAND() LIMIT 10";
         $questions=qa_db_single_select($selectspec);
         return $questions;
     }
@@ -97,7 +99,7 @@ class qa_custom_related_qs
         return $questions;
     }
     
-    function output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml, $questions)
+    function output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml, $questions, $sendEvent = true)
     {
         if ($region == 'side') {
             $themeobject->output(
@@ -108,15 +110,21 @@ class qa_custom_related_qs
             );
 
             $themeobject->output('<ul class="qa-related-q-list">');
-
+            $idx = 1;
             foreach ($questions as $question) {
+                if ($sendEvent) {
+                    $onclick = 'onclick="optSendEvent('.$idx.');"';
+                } else {
+                    $onclick = '';
+                }
                 $themeobject->output(
                         '<li class="qa-related-q-item">' .
-                        '<a href="' . qa_q_path_html($question['postid'], $question['title']) . '">' .
+                        '<a href="' . qa_q_path_html($question['postid'], $question['title']) . '" '.$onclick.'>' .
                         qa_html($question['title']) .
                         '</a>' .
                         '</li>'
                 );
+                $idx++;
             }
 
             $themeobject->output(
@@ -142,10 +150,18 @@ class qa_custom_related_qs
 
             $defaults = qa_post_html_defaults('Q');
             $usershtml = qa_userids_handles_html($questions);
-
-            foreach ($questions as $question)
-                $q_list['qs'][] = qa_post_html_fields($question, $userid, $cookieid, $usershtml, null, qa_post_html_options($question, $defaults));
-
+            $idx = 1;
+            foreach ($questions as $question) {
+                if ($sendEvent) {
+                    $onclick = '" onclick="optSendEvent('.$idx.');';
+                } else {
+                    $onclick = '';
+                }
+                $fields = qa_post_html_fields($question, $userid, $cookieid, $usershtml, null, qa_post_html_options($question, $defaults));
+                $fields['url'] .= $onclick;
+                $q_list['qs'][] = $fields;
+                $idx++;
+            }
             $themeobject->q_list_and_form($q_list);
         }
     }
