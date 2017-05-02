@@ -28,9 +28,9 @@ class qa_html_theme_layer extends qa_html_theme_base
             } else {
                 $this->output('<script>var material_lite = false;</script>');
             }
-            $this->output('<SCRIPT TYPE="text/javascript" SRC="'.$this->infscr->pluginjsurl.'jquery-ias.min.js"></SCRIPT>');
-            $this->output('<SCRIPT TYPE="text/javascript" SRC="'.$this->pluginurl.'js/infinite-scroll-recent.js"></SCRIPT>');
-            $this->output('<SCRIPT TYPE="text/javascript" SRC="'.$this->pluginurl.'js/optimizely.js"></SCRIPT>');
+            $this->output('<SCRIPT async TYPE="text/javascript" SRC="'.$this->infscr->pluginjsurl.'jquery-ias.min.js"></SCRIPT>');
+            $this->output('<SCRIPT async TYPE="text/javascript" SRC="'.$this->pluginurl.'js/infinite-scroll-recent.js"></SCRIPT>');
+            $this->output('<SCRIPT async TYPE="text/javascript" SRC="'.$this->pluginurl.'js/optimizely.js"></SCRIPT>');
         }
     }
     function head_css()
