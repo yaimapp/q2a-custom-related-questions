@@ -23,34 +23,34 @@ class qa_custom_related_qs
 
         $userid = qa_get_logged_in_userid();
         $cookieid = qa_cookie_get();
-                
+
         // 関連する質問
         $rquestions = $this->get_related_questions($userid, $questionid);
         $titlehtml = qa_lang_html(count($rquestions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
-        $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $rquestions);
-        
+        $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml, $rquestions, 'related-q-list');
+
         // おなじ季節の質問
         $squestions = $this->get_seasonal_questions($userid);
         $titlehtml = '同じ季節の質問';
-        $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $squestions);
-        
+        $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml, $squestions, 'season-q-list');
+
         // 最近の質問
         $questions = $this->get_recent_questions($userid);
         $titlehtml = qa_lang_html('main/recent_qs_title');
         if (infinite_scroll_available()) {
             // 無限スクロールが使用できる場合
             $themeobject->output('<div class="qa-qlist-recent">');
-            $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions, false);
+            $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions, 'recent-q-list', false);
             $themeobject->output('</div>');
             $this->output_pagelinks($themeobject);
             if (strpos(qa_opt('site_theme'), 'q2a-material-lite') !== false) {
                 $themeobject->output('<div class="ias-spinner" style="align:center;"><span class="mdl-spinner mdl-js-spinner is-active" style="height:20px;width:20px;"></span></div>');
             }
         } else {
-            $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions, false);
+            $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions, 'recent-q-list', false);
         }
     }
-    
+
     function get_related_questions($userid, $questionid)
     {
         $selectspec = qa_db_related_qs_selectspec($userid, $questionid);
@@ -62,12 +62,12 @@ class qa_custom_related_qs
         $selectspec['arguments'][] = $minscore;
         $selectspec['arguments'][] = $listcount;
         $questions = qa_db_single_select($selectspec);
-        
+
         return $questions;
         // return array_slice($questions, 0, 5);
     }
-    
-    
+
+
     function get_seasonal_questions($userid = null)
     {
         $month = date("m");
@@ -85,21 +85,21 @@ class qa_custom_related_qs
         $questions=qa_db_single_select($selectspec);
         return $questions;
     }
-    
+
     function get_recent_questions($userid = null)
     {
         require_once QA_INCLUDE_DIR.'db/selects.php';
-        
+
         $selectsort='created';
         $start=qa_get_start();
-        
+
         $selectspec = qa_db_qs_selectspec($userid, $selectsort, $start, null, null, false, false, 5);
-        
+
         $questions = qa_db_single_select($selectspec);
         return $questions;
     }
-    
-    function output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml, $questions, $sendEvent = true)
+
+    function output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml, $questions, $class, $sendEvent = false)
     {
         if ($region == 'side') {
             $themeobject->output(
@@ -132,6 +132,7 @@ class qa_custom_related_qs
                 '</div>'
             );
         } else {
+            $themeobject->output('<div class="' . $class . '">');
             $themeobject->output(
                 '<h2>',
                 $titlehtml,
@@ -163,9 +164,10 @@ class qa_custom_related_qs
                 $idx++;
             }
             $themeobject->q_list_and_form($q_list);
+            $themeobject->output('</div>');
         }
     }
-    
+
     function output_pagelinks($themeobject)
     {
         $start = qa_get_start();
