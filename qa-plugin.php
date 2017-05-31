@@ -21,6 +21,8 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 qa_register_plugin_module('widget','qa-custom-related-qs-widget.php','qa_custom_related_qs','Custom Related Questions');
 qa_register_plugin_layer('qa-custom-related-qs-layer.php', 'Custom Related Questions Layer');
 
+@define( 'CUSTOME_RELATED_DIR', dirname( __FILE__ ) );
+
 function infinite_scroll_available()
 {
     global $qa_layers;

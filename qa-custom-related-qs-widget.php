@@ -49,6 +49,10 @@ class qa_custom_related_qs
         } else {
             $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions, 'recent-q-list', false);
         }
+
+        // フッター(A/Bテスト用)。$('#related-widget-footer').show();で表示される
+        $footer = file_get_contents(CUSTOME_RELATED_DIR . '/html/footer.html');
+        $themeobject->output($footer);
     }
 
     function get_related_questions($userid, $questionid)
