@@ -20,8 +20,8 @@ $(function(){
         ias.extension(new IASSpinnerExtension());
     }
     ias.extension(new IASTriggerExtension({
-        text: "続きを読む",
-        textPrev: "前を読む",
+        text: crq_lang.read_next,
+        textPrev: crq_lang.read_previous,
         offset: 100,
     }));
     ias.extension(new IASNoneLeftExtension({
