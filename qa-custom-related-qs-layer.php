@@ -28,6 +28,15 @@ class qa_html_theme_layer extends qa_html_theme_base
             } else {
                 $this->output('<script>var material_lite = false;</script>');
             }
+            $lang_json = json_encode (array(
+              'read_next' => qa_lang_html('custom_related_qs/read_next'),
+              'read_previous' => qa_lang_html('custom_related_qs/read_previous'),
+            ));
+            $this->output(
+              '<script>',
+              "var crq_lang = $lang_json ;",
+              '</script>'
+            );
             $this->output('<SCRIPT TYPE="text/javascript" SRC="'.$this->infscr->pluginjsurl.'jquery-ias.min.js"></SCRIPT>');
             $this->output('<SCRIPT TYPE="text/javascript" SRC="'.$this->pluginurl.'js/infinite-scroll-recent.js"></SCRIPT>');
             $this->output('<SCRIPT TYPE="text/javascript" SRC="'.$this->pluginurl.'js/optimizely.js"></SCRIPT>');

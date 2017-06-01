@@ -31,7 +31,7 @@ class qa_custom_related_qs
 
         // おなじ季節の質問
         $squestions = $this->get_seasonal_questions($userid);
-        $titlehtml = '同じ季節の質問';
+        $titlehtml = qa_lang_html('custom_related_qs/title_seasons');
         $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml, $squestions, 'season-q-list');
 
         // 最近の質問
@@ -51,7 +51,15 @@ class qa_custom_related_qs
         }
 
         // フッター(A/Bテスト用)。$('#related-widget-footer').show();で表示される
-        $footer = file_get_contents(CUSTOME_RELATED_DIR . '/html/footer.html');
+        $footer_tmpl = file_get_contents(CUSTOME_RELATED_DIR . '/html/footer.html');
+        $subs = array(
+          '^title' => qa_lang_html('custom_related_qs/footer_title'),
+          '^read_fame' => qa_lang_html('custom_related_qs/read_fame'),
+          '^read_recent' => qa_lang_html('custom_related_qs/read_recent'),
+          '^read_blog' => qa_lang_html('custom_related_qs/read_blog'),
+          '^about' => qa_lang_html('custom_related_qs/about'),
+        );
+        $footer = strtr($footer_tmpl, $subs);
         $themeobject->output($footer);
     }
 

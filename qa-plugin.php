@@ -20,6 +20,8 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
 
 qa_register_plugin_module('widget','qa-custom-related-qs-widget.php','qa_custom_related_qs','Custom Related Questions');
 qa_register_plugin_layer('qa-custom-related-qs-layer.php', 'Custom Related Questions Layer');
+// language file
+qa_register_plugin_phrases('qa-custom-related-qs-lang-*.php', 'custom_related_qs');
 
 @define( 'CUSTOME_RELATED_DIR', dirname( __FILE__ ) );
 
