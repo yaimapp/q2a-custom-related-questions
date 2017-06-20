@@ -37,20 +37,8 @@ class qa_custom_related_qs
         // 最近の質問
         $questions = $this->get_recent_questions($userid);
         $titlehtml = qa_lang_html('main/recent_qs_title');
-        if (infinite_scroll_available()) {
-            // 無限スクロールが使用できる場合
-            $themeobject->output('<div class="qa-qlist-recent">');
-            $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions, 'recent-q-list', false);
-            $themeobject->output('</div>');
-            $this->output_pagelinks($themeobject);
-            if (strpos(qa_opt('site_theme'), 'q2a-material-lite') !== false) {
-                $themeobject->output('<div class="ias-spinner" style="align:center;"><span class="mdl-spinner mdl-js-spinner is-active" style="height:20px;width:20px;"></span></div>');
-            }
-        } else {
-            $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions, 'recent-q-list', false);
-        }
+        $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions, 'recent-q-list', false);
 
-        // フッター(A/Bテスト用)。$('#related-widget-footer').show();で表示される
         $footer_tmpl = file_get_contents(CUSTOME_RELATED_DIR . '/html/footer.html');
         $subs = array(
           '^title' => qa_lang_html('custom_related_qs/footer_title'),
