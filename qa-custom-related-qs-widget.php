@@ -33,22 +33,6 @@ class qa_custom_related_qs
         $squestions = $this->get_seasonal_questions($userid);
         $titlehtml = qa_lang_html('custom_related_qs/title_seasons');
         $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml, $squestions, 'season-q-list');
-
-        // 最近の質問
-        $questions = $this->get_recent_questions($userid);
-        $titlehtml = qa_lang_html('main/recent_qs_title');
-        $this->output_questions_widget($region, $place, $themeobject, $userid, $cookieid, $titlehtml,  $questions, 'recent-q-list', false);
-
-        $footer_tmpl = file_get_contents(CUSTOME_RELATED_DIR . '/html/footer.html');
-        $subs = array(
-          '^title' => qa_lang_html('custom_related_qs/footer_title'),
-          '^read_fame' => qa_lang_html('custom_related_qs/read_fame'),
-          '^read_recent' => qa_lang_html('custom_related_qs/read_recent'),
-          '^read_blog' => qa_lang_html('custom_related_qs/read_blog'),
-          '^about' => qa_lang_html('custom_related_qs/about'),
-        );
-        $footer = strtr($footer_tmpl, $subs);
-        $themeobject->output($footer);
     }
 
     function get_related_questions($userid, $questionid)
