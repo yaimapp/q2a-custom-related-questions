@@ -2,6 +2,8 @@
 
 class qa_custom_related_qs
 {
+    const CACHE_EXPIRES = 60 * 60;
+    
     public function allow_template($template)
     {
         return $template == 'question';
@@ -37,16 +39,22 @@ class qa_custom_related_qs
 
     function get_related_questions($userid, $questionid)
     {
-        $selectspec = qa_db_related_qs_selectspec($userid, $questionid);
-        $minscore = qa_match_to_min_score(qa_opt('match_related_qs'));
-        $minacount = 2;
-        $listcount = 10;
-        $selectspec['source'] .= ' WHERE ^posts.acount >= # AND y.score >= # LIMIT #';
-        $selectspec['arguments'][] = $minacount;
-        $selectspec['arguments'][] = $minscore;
-        $selectspec['arguments'][] = $listcount;
-        $questions = qa_db_single_select($selectspec);
-
+        global $qa_cache;
+        $key = 'q-related-'.$questionid;
+        if($qa_cache->has($key)) {
+            $questions = $qa_cache->get($key);
+        } else {
+            $selectspec = qa_db_related_qs_selectspec($userid, $questionid);
+            $minscore = qa_match_to_min_score(qa_opt('match_related_qs'));
+            $minacount = 2;
+            $listcount = 10;
+            $selectspec['source'] .= ' WHERE ^posts.acount >= # AND y.score >= # LIMIT #';
+            $selectspec['arguments'][] = $minacount;
+            $selectspec['arguments'][] = $minscore;
+            $selectspec['arguments'][] = $listcount;
+            $questions = qa_db_single_select($selectspec);
+            $qa_cache->set($key, $questions, self::CACHE_EXPIRES);
+        }
         return $questions;
         // return array_slice($questions, 0, 5);
     }
