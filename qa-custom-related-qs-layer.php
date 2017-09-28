@@ -14,12 +14,21 @@ class qa_html_theme_layer extends qa_html_theme_base
         $this->pluginurl = qa_opt('site_url').'qa-plugin/q2a-custom-related-questions/';
     }
 
-    function head_script()
+    function body_footer()
     {
-        qa_html_theme_base::head_script();
-    }
-    function head_css()
-    {
-        qa_html_theme_base::head_css();
+        qa_html_theme_base::body_footer();
+        if($this->template === 'question') {
+            $userid = qa_get_logged_in_userid();
+            $postid = @$this->content['q_view']['raw']['postid'];
+            $script = <<<EOS
+<script>
+var related_qs_userid = '{$userid}';
+var related_qs_postid = '{$postid}';
+</script>
+EOS;
+            $this->output($script);
+            $src = $this->pluginurl.'js/related-qs.js';
+            $this->output('<script src="'.$src.'"></script>');
+        }
     }
 }
