@@ -84,17 +84,4 @@ class qa_custom_related_qs
         $themeobject->output('<div class="' . $class . '" id="'.$class.'"></div>');
     }
 
-
-    function output_pagelinks($themeobject)
-    {
-        $start = qa_get_start();
-        $page_links = qa_html_page_links(qa_request(), $start, 5, qa_opt('cache_qcount'), qa_opt('pages_prev_next'), array());
-        $themeobject->output('<div class="qa-page-links">');
-
-        $themeobject->page_links_label($page_links['label']);
-        $themeobject->page_links_list($page_links['items']);
-        $themeobject->page_links_clear();
-
-        $themeobject->output('</div>');
-    }
 }
