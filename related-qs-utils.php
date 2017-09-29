@@ -6,7 +6,7 @@ class related_qs_utils {
     
     const CACHE_EXPIRES = 60 * 60;      // キャッシュの保存期間
     const MIN_ACOUNT = 2;               // 最小の回答数
-    const LIST_COUNT = 10;              // 表示件数
+    const LIST_COUNT = 15;              // 表示件数
 
     /*
      * 関連する質問
@@ -47,7 +47,9 @@ class related_qs_utils {
         // $userid = '1';
         $selectspec=qa_db_posts_basic_selectspec($userid);
         $selectspec['source'] .=" WHERE type='Q'";
-        $selectspec['source'] .= " AND ^posts.created like '" . $date . "' ORDER BY RAND() LIMIT 10";
+        $selectspec['source'] .= " AND ^posts.created like $ ORDER BY RAND() LIMIT #";
+        $selectspec['arguments'][] = $date;
+        $selectspec['arguments'][] = self::LIST_COUNT;
         $questions=qa_db_single_select($selectspec);
         return $questions;
     }
