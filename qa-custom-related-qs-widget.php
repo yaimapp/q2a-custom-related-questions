@@ -27,18 +27,18 @@ class qa_custom_related_qs
         $cookieid = qa_cookie_get();
 
         // 関連する質問
-        $rquestions = related_qs_utils::get_related_questions($userid, $questionid);
-        $titlehtml = qa_lang_html(count($rquestions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
         if ($region === 'side') {
+            $rquestions = related_qs_utils::get_related_questions($userid, $questionid);
+            $titlehtml = qa_lang_html(count($rquestions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
             $this->output_questions_widget_side($themeobject, $titlehtml, $rquestions, 'related-q-list');
         } else {
             $this->output_questions_widget_main($themeobject, 'related-q-list');
         }
 
         // おなじ季節の質問
-        $squestions = related_qs_utils::get_seasonal_questions($userid);
-        $titlehtml = qa_lang_html('custom_related_qs/title_seasons');
         if ($region === 'side') {
+            $squestions = related_qs_utils::get_seasonal_questions($userid);
+            $titlehtml = qa_lang_html('custom_related_qs/title_seasons');
             $this->output_questions_widget_side($themeobject, $titlehtml, $squestions, 'season-q-list');
         } else {
             $this->output_questions_widget_main($themeobject, 'season-q-list');

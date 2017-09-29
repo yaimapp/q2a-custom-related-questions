@@ -18,11 +18,9 @@ class qa_html_theme_layer extends qa_html_theme_base
     {
         qa_html_theme_base::body_footer();
         if($this->template === 'question') {
-            $userid = qa_get_logged_in_userid();
             $postid = @$this->content['q_view']['raw']['postid'];
             $script = <<<EOS
 <script>
-var related_qs_userid = '{$userid}';
 var related_qs_postid = '{$postid}';
 </script>
 EOS;

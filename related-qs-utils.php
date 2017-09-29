@@ -5,6 +5,8 @@ require_once QA_INCLUDE_DIR.'db/selects.php';
 class related_qs_utils {
     
     const CACHE_EXPIRES = 60 * 60;      // キャッシュの保存期間
+    const MIN_ACOUNT = 2;               // 最小の回答数
+    const LIST_COUNT = 10;              // 表示件数
 
     /*
      * 関連する質問
@@ -18,12 +20,10 @@ class related_qs_utils {
         } else {
             $selectspec = qa_db_related_qs_selectspec($userid, $questionid);
             $minscore = qa_match_to_min_score(qa_opt('match_related_qs'));
-            $minacount = 2;
-            $listcount = 10;
             $selectspec['source'] .= ' WHERE ^posts.acount >= # AND y.score >= # LIMIT #';
-            $selectspec['arguments'][] = $minacount;
+            $selectspec['arguments'][] = self::MIN_ACOUNT;
             $selectspec['arguments'][] = $minscore;
-            $selectspec['arguments'][] = $listcount;
+            $selectspec['arguments'][] = self::LIST_COUNT;
             $questions = qa_db_single_select($selectspec);
             $qa_cache->set($key, $questions, self::CACHE_EXPIRES);
         }
@@ -69,7 +69,7 @@ class related_qs_utils {
     /*
      * q_list を返す
      */
-    public static function get_q_list($questions, $userid, $cookieid) {
+    public static function get_q_list($questions, $userid, $sendEvent = false) {
 
         $q_list = array(
             'form' => array(
@@ -81,6 +81,7 @@ class related_qs_utils {
             'qs' => array(),
         );
 
+        $cookieid = qa_cookie_get();
         $defaults = qa_post_html_defaults('Q');
         $usershtml = qa_userids_handles_html($questions);
         $idx = 1;
@@ -101,12 +102,41 @@ class related_qs_utils {
     /*
      * 関連する質問のHTMLを返す
      */
-    public static function get_related_qs_html($userid, $questionid)
+    public static function get_related_qs_html($userid, $questionid, $themeobject)
     {
-        $titlehtml = qa_lang('main/related_qs_title');
+        $questions = self::get_related_questions($userid, $questionid);
+        if (count($questions) > 0) {
+            $titlehtml = qa_lang('main/related_qs_title');
+            $html = '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
+        } else {
+            $titlehtml = qa_lang('no_related_qs_title');
+            return '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
+        }
+
+        $q_list = self::get_q_list($questions, $userid);
+        
+        ob_start();
+        $themeobject->q_list_and_form($q_list);
+        $html .= ob_get_clean();
+
+        return $html;
+    }
+
+    /*
+     * 季節の質問のHTMLを返す
+     */
+    public static function get_seasonal_qs_html($userid, $themeobject)
+    {
+        $questions = self::get_seasonal_questions($userid);
+        $titlehtml = qa_lang_html('custom_related_qs/title_seasons');
         $html = '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
-        $html .= '<p>userid: '.$userid.'</p>';
-        $html .= '<p>postid: '.$questionid.'</p>';
+
+        $q_list = self::get_q_list($questions, $userid);
+
+        ob_start();
+        $themeobject->q_list_and_form($q_list);
+        $html .= ob_get_clean();
+
         return $html;
     }
 }
