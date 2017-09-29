@@ -1,7 +1,6 @@
 $(document).ready(function() {
 
     function ajax_get_related_qs() {
-        console.log('get_related_qs');
         $.ajax({
             url: './relatedqs/',
             type: 'GET',
@@ -27,7 +26,19 @@ $(document).ready(function() {
         })
     }
 
-    setTimeout(function() {
-        ajax_get_related_qs();
-    }, 3000);
+    var widget_top = $('#related-q-list').offset().top;
+    var window_height = window.innerHeight;
+    var read_question_list = false;
+    $(window).scroll(function(){
+
+        var scr_count = $(document).scrollTop();
+        // widget の位置に来たらリストを読み込む
+        if(scr_count + window_height >= widget_top) {
+            if (!read_question_list) {
+                ajax_get_related_qs();
+                read_question_list = true;
+            }
+        }
+    });
+
 });
