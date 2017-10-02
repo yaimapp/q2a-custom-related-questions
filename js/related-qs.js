@@ -29,11 +29,12 @@ $(document).ready(function() {
     var widget_top = $('#related-q-list').offset().top;
     var window_height = window.innerHeight;
     var read_question_list = false;
+    var offset = 100;
     $(window).scroll(function(){
 
         var scr_count = $(document).scrollTop();
         // widget の位置に来たらリストを読み込む
-        if(scr_count + window_height >= widget_top) {
+        if(scr_count + window_height + offset >= widget_top) {
             if (!read_question_list) {
                 ajax_get_related_qs();
                 read_question_list = true;
