@@ -17,7 +17,7 @@ class qa_html_theme_layer extends qa_html_theme_base
     function body_footer()
     {
         qa_html_theme_base::body_footer();
-        if($this->template === 'question') {
+        if($this->template === 'question' && !$this->is_edit()) {
             $postid = @$this->content['q_view']['raw']['postid'];
             $script = <<<EOS
 <script>
@@ -28,5 +28,16 @@ EOS;
             $src = $this->pluginurl.'js/related-qs.js';
             $this->output('<script src="'.$src.'"></script>');
         }
+    }
+
+    function is_edit()
+    {
+        $content = $this->content;
+        if(strpos(qa_get_state(),'edit') !== false) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }
