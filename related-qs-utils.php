@@ -48,6 +48,8 @@ class related_qs_utils {
 
         // $userid = '1';
         $selectspec=qa_db_posts_basic_selectspec($userid);
+        $selectspec['columns']['content'] = '^posts.content ';
+        $selectspec['columns']['format'] = '^posts.format ';
         $selectspec['source'] .=" WHERE type='Q'";
         $selectspec['source'] .= " AND ^posts.created like $ ORDER BY RAND() LIMIT #";
         $selectspec['arguments'][] = $date;
@@ -65,6 +67,8 @@ class related_qs_utils {
         $start=qa_get_start();
 
         $selectspec = qa_db_qs_selectspec($userid, $selectsort, $start, null, null, false, false, 5);
+        $selectspec['columns']['content'] = '^posts.content ';
+        $selectspec['columns']['format'] = '^posts.format ';
 
         $questions = qa_db_single_select($selectspec);
         return $questions;
