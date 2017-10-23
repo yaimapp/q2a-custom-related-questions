@@ -20,6 +20,8 @@ class related_qs_utils {
         } else {
             $selectspec = qa_db_related_qs_selectspec($userid, $questionid);
             $minscore = qa_match_to_min_score(qa_opt('match_related_qs'));
+            $selectspec['columns']['content'] = '^posts.content ';
+            $selectspec['columns']['format'] = '^posts.format ';
             $selectspec['source'] .= ' WHERE ^posts.acount >= # AND y.score >= # LIMIT #';
             $selectspec['arguments'][] = self::MIN_ACOUNT;
             $selectspec['arguments'][] = $minscore;
@@ -46,6 +48,8 @@ class related_qs_utils {
 
         // $userid = '1';
         $selectspec=qa_db_posts_basic_selectspec($userid);
+        $selectspec['columns']['content'] = '^posts.content ';
+        $selectspec['columns']['format'] = '^posts.format ';
         $selectspec['source'] .=" WHERE type='Q'";
         $selectspec['source'] .= " AND ^posts.created like $ ORDER BY RAND() LIMIT #";
         $selectspec['arguments'][] = $date;
@@ -63,6 +67,8 @@ class related_qs_utils {
         $start=qa_get_start();
 
         $selectspec = qa_db_qs_selectspec($userid, $selectsort, $start, null, null, false, false, 5);
+        $selectspec['columns']['content'] = '^posts.content ';
+        $selectspec['columns']['format'] = '^posts.format ';
 
         $questions = qa_db_single_select($selectspec);
         return $questions;
@@ -85,6 +91,7 @@ class related_qs_utils {
 
         $cookieid = qa_cookie_get();
         $defaults = qa_post_html_defaults('Q');
+        $defaults['contentview'] = true;
         $usershtml = qa_userids_handles_html($questions);
         $idx = 1;
         foreach ($questions as $question) {
@@ -95,6 +102,9 @@ class related_qs_utils {
             }
             $fields = qa_post_html_fields($question, $userid, $cookieid, $usershtml, null, qa_post_html_options($question, $defaults));
             $fields['url'] .= $onclick;
+            if (function_exists('qme_remove_anchor')) {
+                $fields['content'] = qme_remove_anchor($fields['content']);
+            }
             $q_list['qs'][] = $fields;
             $idx++;
         }
