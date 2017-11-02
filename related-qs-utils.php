@@ -4,7 +4,7 @@ require_once QA_INCLUDE_DIR.'db/selects.php';
 
 class related_qs_utils {
     
-    const CACHE_EXPIRES = 60 * 60;      // キャッシュの保存期間
+    const CACHE_EXPIRES = 60 * 10;      // キャッシュの保存期間
     const MIN_ACOUNT = 2;               // 最小の回答数
     const LIST_COUNT = 15;              // 表示件数
 
