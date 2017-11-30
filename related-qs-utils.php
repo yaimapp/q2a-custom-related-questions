@@ -5,7 +5,9 @@ require_once QA_INCLUDE_DIR.'db/selects.php';
 class related_qs_utils {
     
     const CACHE_EXPIRES = 60 * 10;      // キャッシュの保存期間
-    const MIN_ACOUNT = 2;               // 最小の回答数
+    const MIN_ACOUNT_IMG = 2;           // 最小の回答数(画像あり)
+    const MIN_ACOUNT = 3;               // 最小の回答数
+    const LIST_COUNT_IMG = 5;           // 表示件数(画像あり)
     const LIST_COUNT = 15;              // 表示件数
 
     /*
@@ -18,15 +20,31 @@ class related_qs_utils {
         if($qa_cache->has($key)) {
             $questions = $qa_cache->get($key);
         } else {
-            $selectspec = qa_db_related_qs_selectspec($userid, $questionid);
+            $orgselspec = qa_db_related_qs_selectspec($userid, $questionid);
             $minscore = qa_match_to_min_score(qa_opt('match_related_qs'));
-            $selectspec['columns']['content'] = '^posts.content ';
-            $selectspec['columns']['format'] = '^posts.format ';
-            $selectspec['source'] .= ' WHERE ^posts.acount >= # AND y.score >= # LIMIT #';
-            $selectspec['arguments'][] = self::MIN_ACOUNT;
-            $selectspec['arguments'][] = $minscore;
-            $selectspec['arguments'][] = self::LIST_COUNT;
-            $questions = qa_db_single_select($selectspec);
+            $orgselspec['columns']['content'] = '^posts.content ';
+            $orgselspec['columns']['format'] = '^posts.format ';
+            $imgselspec = $orgselspec;
+            $where = " WHERE  (^posts.content like '%[image=%'";
+            $where.= " OR ^posts.content like '%<img%'";
+            $where.= " OR ^posts.content like '%[uploaded-video=%'";
+            $where.= " OR ^posts.content like '%plain_url%')";
+            $where.= ' AND ^posts.acount >= # AND y.score >= # LIMIT #';
+            $imgselspec['source'] .= $where;
+            $imgselspec['arguments'][] = self::MIN_ACOUNT_IMG;
+            $imgselspec['arguments'][] = $minscore;
+            $imgselspec['arguments'][] = self::LIST_COUNT_IMG;
+
+            $otherselspec = $orgselspec;
+            $otherselspec['source'] .= ' WHERE ^posts.acount >= # AND y.score >= # LIMIT #';
+            $otherselspec['arguments'][] = self::MIN_ACOUNT;
+            $otherselspec['arguments'][] = $minscore;
+            $otherselspec['arguments'][] = self::LIST_COUNT;
+
+            list($imgquestions, $otherquestions) = qa_db_select_with_pending(
+                $imgselspec, $otherselspec
+            );
+            $questions = array_slice(array_replace($imgquestions, $otherquestions), 0, self::LIST_COUNT);
             $qa_cache->set($key, $questions, self::CACHE_EXPIRES);
         }
         return $questions;
@@ -121,7 +139,7 @@ class related_qs_utils {
             $titlehtml = qa_lang('main/related_qs_title');
             $html = '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
         } else {
-            $titlehtml = qa_lang('no_related_qs_title');
+            $titlehtml = qa_lang('main/no_related_qs_title');
             return '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
         }
 
