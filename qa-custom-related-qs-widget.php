@@ -27,11 +27,13 @@ class qa_custom_related_qs
         $cookieid = qa_cookie_get();
 
         // 関連する質問
-        $rquestions = related_qs_utils::get_related_questions($userid, $questionid);
-        $titlehtml = qa_lang_html(count($rquestions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
         if ($region === 'side') {
+            $rquestions = related_qs_utils::get_related_questions($userid, $questionid, 5);
+            $titlehtml = qa_lang_html(count($rquestions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
             $this->output_questions_widget_side($themeobject, $titlehtml, $rquestions, 'related-q-list');
         } else {
+            $rquestions = related_qs_utils::get_related_questions_imagepost($userid, $questionid);
+            $titlehtml = qa_lang_html(count($rquestions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
             $this->output_questions_widget_main($themeobject, $titlehtml, 'related-q-list');
         }
 

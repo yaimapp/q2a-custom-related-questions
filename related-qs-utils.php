@@ -13,7 +13,31 @@ class related_qs_utils {
     /*
      * 関連する質問
      */
-    public static function get_related_questions($userid, $questionid)
+    public static function get_related_questions($userid, $questionid, $list_count)
+    {
+        global $qa_cache;
+        $key = 'q-r-question-'.$questionid;
+        if($qa_cache->has($key)) {
+            $questions = $qa_cache->get($key);
+        } else {
+            $selectspec = qa_db_related_qs_selectspec($userid, $questionid);
+            $minscore = qa_match_to_min_score(qa_opt('match_related_qs'));
+            $selectspec['columns']['content'] = '^posts.content ';
+            $selectspec['columns']['format'] = '^posts.format ';
+            $selectspec['source'] .= ' WHERE ^posts.acount >= # AND y.score >= # LIMIT #';
+            $selectspec['arguments'][] = self::MIN_ACOUNT;
+            $selectspec['arguments'][] = $minscore;
+            $selectspec['arguments'][] = $list_count;
+            $questions = qa_db_single_select($selectspec);
+            $qa_cache->set($key, $questions, self::CACHE_EXPIRES);
+        }
+        return $questions;
+    }
+
+    /*
+     * 関連する質問（画像付き投稿を優先）
+     */
+    public static function get_related_questions_imagepost($userid, $questionid)
     {
         global $qa_cache;
         $key = 'q-related-'.$questionid;
@@ -134,7 +158,7 @@ class related_qs_utils {
      */
     public static function get_related_qs_html($userid, $questionid, $themeobject)
     {
-        $questions = self::get_related_questions($userid, $questionid);
+        $questions = self::get_related_questions_imagepost($userid, $questionid);
         if (count($questions) > 0) {
             $titlehtml = qa_lang('main/related_qs_title');
             $html = '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
