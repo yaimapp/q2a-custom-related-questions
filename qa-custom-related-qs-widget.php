@@ -79,6 +79,15 @@ class qa_custom_related_qs
             '</ul>',
             '</div>'
         );
+        global $qa_layers;
+        $plugin_url = $qa_layers['Custom Related Questions Layer']['urltoroot'];
+        $themeobject->output(
+            '<div id="widgets-side-banner">',
+            '<a href="/ask">',
+            '<img src="/'.$plugin_url.'images/side_banner.png">',
+            '</a>',
+            '</div>'
+        );
     }
 
     function output_questions_widget_main($themeobject, $titlehtml, $class)
