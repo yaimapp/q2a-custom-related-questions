@@ -30,6 +30,7 @@ $(document).ready(function() {
     var window_height = window.innerHeight;
     var read_question_list = false;
     var offset = 100;
+
     $(window).scroll(function(){
 
         var scr_count = $(document).scrollTop();
@@ -39,6 +40,12 @@ $(document).ready(function() {
                 ajax_get_related_qs();
                 read_question_list = true;
             }
+        }
+        var is_sidefix = $('#qa-widgets-side.fixed').hasClass('fixed');
+        if (is_sidefix && scr_count > 150) {
+            $('#qa-widgets-side.fixed').attr('style', 'top: 50px');
+        } else if (is_sidefix && scr_count <= 150) {
+            $('#qa-widgets-side.fixed').attr('style', 'top: 260px');
         }
     });
 
