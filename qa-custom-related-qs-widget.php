@@ -58,8 +58,8 @@ class qa_custom_related_qs
         );
 
         $themeobject->output('<ul class="qa-related-q-list">');
-        $idx = 1;
-        foreach ($questions as $question) {
+        $idx = 0;
+        foreach ($questions as $index => $question) {
             if ($sendEvent) {
                 $onclick = 'onclick="optSendEvent('.$idx.');"';
             } else {
@@ -67,8 +67,8 @@ class qa_custom_related_qs
             }
             $themeobject->output(
                     '<li class="qa-related-q-item">' .
-                    '<a href="' . qa_q_path_html($question['postid'], $question['title']) . '" '.$onclick.'>' .
-                    qa_html($question['title']) .
+                    '<a id="side-related-q-'.$idx.'" href="' . qa_q_path_html($question['postid'], $question['title']) . '" '.$onclick.'>' .
+                    $this->truncate_text(qa_html($question['title']), 71) .
                     '</a>' .
                     '</li>'
             );
@@ -82,7 +82,7 @@ class qa_custom_related_qs
         global $qa_layers;
         $plugin_url = $qa_layers['Custom Related Questions Layer']['urltoroot'];
         $themeobject->output(
-            '<div id="widgets-side-banner">',
+            '<div id="side-ask-banner">',
             '<a href="/ask">',
             '<img src="/'.$plugin_url.'images/side_banner.png">',
             '</a>',
@@ -96,6 +96,18 @@ class qa_custom_related_qs
         $themeobject->output('<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>');
         $themeobject->output('<div class="ias-spinner" style="text-align:center;"><span class="mdl-spinner mdl-js-spinner is-active" style="height:20px;width:20px;"></span></div>');
         $themeobject->output('</div>');
+    }
+
+    private function truncate_text($content, $length)
+    {
+        error_log(mb_strlen($content, "UTF-8"));
+        if (mb_strlen($content, "UTF-8") >= $length) {
+            $tmp = mb_substr($content, 0, $length - 1, "UTF-8");
+            $tmp .= '&#8230;';
+        } else {
+            $tmp = $content;
+        }
+        return $tmp;
     }
 
 }
