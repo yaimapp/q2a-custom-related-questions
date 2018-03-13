@@ -59,7 +59,7 @@ class qa_custom_related_qs
 
         $themeobject->output('<ul class="qa-related-q-list">');
         $idx = 0;
-        foreach ($questions as $index => $question) {
+        foreach ($questions as $question) {
             if ($sendEvent) {
                 $onclick = 'onclick="optSendEvent('.$idx.');"';
             } else {
