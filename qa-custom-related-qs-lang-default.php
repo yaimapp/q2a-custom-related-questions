@@ -10,6 +10,9 @@
     'read_recent' => '最近の質問をみる',
     'read_blog' => 'みんなの飼育日誌を読む',
     'about' => 'このサイトについて',
+    'hall_of_fame' => '殿堂入り',
+    'fame_title' => '人気の記事',
+    'no_fame_title' => '人気の記事はありません',
   );
 
 /*
