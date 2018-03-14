@@ -179,7 +179,7 @@ class related_qs_utils {
     /*
      * q_list を返す
      */
-    public static function get_q_list($questions, $userid, $sendEvent = false, $idx= 1) {
+    public static function get_q_list($questions, $userid, $sendEvent = false, $start_index = 1) {
 
         $q_list = array(
             'form' => array(
@@ -195,6 +195,7 @@ class related_qs_utils {
         $defaults = qa_post_html_defaults('Q');
         $defaults['contentview'] = true;
         $usershtml = qa_userids_handles_html($questions);
+        $idx = $start_index;
         foreach ($questions as $question) {
             if ($sendEvent) {
                 $onclick = '" onclick="optSendEvent('.$idx.');';
@@ -206,6 +207,7 @@ class related_qs_utils {
             if (function_exists('qme_remove_anchor')) {
                 $fields['content'] = qme_remove_anchor($fields['content']);
             }
+            $fields['list_index'] = $idx;
             $q_list['qs'][] = $fields;
             $idx++;
         }
@@ -257,10 +259,10 @@ class related_qs_utils {
         if (count($questions2) > 0) {
             $titlehtml = qa_lang('custom_related_qs/fame_title');
             $html .= '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
-            $q_list = self::get_q_list($questions2, $userid);
+            $q_list = self::get_q_list($questions2, $userid, false, 6);
             
             ob_start();
-            $themeobject->q_list_and_form($q_list, 6);
+            $themeobject->q_list_and_form($q_list);
             $html .= ob_get_clean();
         } else {
             $titlehtml = qa_lang('custom_related_qs/no_fame_title');

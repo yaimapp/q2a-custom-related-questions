@@ -32,6 +32,18 @@ EOS;
         }
     }
 
+    function q_list_items($q_items)
+    {
+        if($this->template === 'ajax-rlated-qs') {
+            foreach ($q_items as $q_item) {
+              $q_item['classes'] = $q_item['classes'] . ' q-item-' . $q_item['list_index'];
+              $this->q_list_item($q_item);
+            }
+        } else {
+            qa_html_theme_base::q_list_items($q_items);
+        }
+    }
+
     function is_edit()
     {
         $content = $this->content;
