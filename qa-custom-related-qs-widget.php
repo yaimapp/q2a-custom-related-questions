@@ -92,6 +92,7 @@ class qa_custom_related_qs
 
     function output_questions_widget_main($themeobject, $titlehtml, $class)
     {
+        $themeobject->output('<span id="related-qs-ajax" data-url="relatedqs"></span>');
         $themeobject->output('<div class="' . $class . '" id="'.$class.'">');
         $themeobject->output('<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>');
         $themeobject->output('<div class="ias-spinner" style="text-align:center;"><span class="mdl-spinner mdl-js-spinner is-active" style="height:20px;width:20px;"></span></div>');
@@ -100,7 +101,6 @@ class qa_custom_related_qs
 
     private function truncate_text($content, $length)
     {
-        error_log(mb_strlen($content, "UTF-8"));
         if (mb_strlen($content, "UTF-8") >= $length) {
             $tmp = mb_substr($content, 0, $length - 1, "UTF-8");
             $tmp .= '&#8230;';

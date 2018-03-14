@@ -1,8 +1,9 @@
 $(document).ready(function() {
 
     function ajax_get_related_qs() {
+        var related_ajax_url = base_url + $('#related-qs-ajax').data('url');
         $.ajax({
-            url: './relatedqs/',
+            url: related_ajax_url,
             type: 'GET',
             dataType: 'json',
             cache : false,

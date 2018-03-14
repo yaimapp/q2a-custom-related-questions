@@ -22,8 +22,14 @@ class qa_crq_page {
             $themeclass=qa_load_theme_class(qa_get_site_theme(), 'ajax-rlated-qs', null, null);
             $themeclass->initialize();
 
+            $type = qa_request_part(1);
+
             // 関連する質問
-            $related_qs_html = related_qs_utils::get_related_qs_html($userid, $postid, $themeclass);
+            if ($type === 'hall') {
+                $related_qs_html = related_qs_utils::get_related_qs_html_hall($userid, $postid, $themeclass);
+            } else {
+                $related_qs_html = related_qs_utils::get_related_qs_html($userid, $postid, $themeclass);
+            }
             // 季節の質問
             // $seasonal_qs_html = related_qs_utils::get_seasonal_qs_html($userid, $themeclass);
 
