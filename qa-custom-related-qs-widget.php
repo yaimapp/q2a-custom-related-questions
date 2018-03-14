@@ -92,7 +92,7 @@ class qa_custom_related_qs
 
     function output_questions_widget_main($themeobject, $titlehtml, $class)
     {
-        $themeobject->output('<span id="related-qs-ajax" data-url="relatedqs/hall"></span>');
+        $themeobject->output('<span id="related-qs-ajax" data-url="relatedqs"></span>');
         $themeobject->output('<div class="' . $class . '" id="'.$class.'">');
         $themeobject->output('<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>');
         $themeobject->output('<div class="ias-spinner" style="text-align:center;"><span class="mdl-spinner mdl-js-spinner is-active" style="height:20px;width:20px;"></span></div>');
