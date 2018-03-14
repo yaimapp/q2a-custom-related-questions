@@ -19,9 +19,11 @@ class qa_html_theme_layer extends qa_html_theme_base
         qa_html_theme_base::body_footer();
         if($this->template === 'question' && !$this->is_edit()) {
             $postid = @$this->content['q_view']['raw']['postid'];
+            $baseurl = qa_opt('site_url');
             $script = <<<EOS
 <script>
 var related_qs_postid = '{$postid}';
+var base_url = '{$baseurl}';
 </script>
 EOS;
             $this->output($script);
