@@ -1,6 +1,17 @@
 $(document).ready(function() {
 
     function ajax_get_related_qs() {
+        // optimizelyに関連質問ロードのイベントを送る
+        window['optimizely'] = window['optimizely'] || [];
+        window['optimizely'].push({
+          type: "event",
+          eventName: "get_related_q",
+          tags: {
+            revenue: 0, // Optional in cents as integer (500 == $5.00)
+            value: 0.00 // Optional as float
+          }
+        });
+
         var related_ajax_url = base_url + $('#related-qs-ajax').data('url');
         $.ajax({
             url: related_ajax_url,
