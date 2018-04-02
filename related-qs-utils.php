@@ -25,9 +25,13 @@ class related_qs_utils {
             $minscore = qa_match_to_min_score(qa_opt('match_related_qs'));
             $selectspec['columns']['content'] = '^posts.content ';
             $selectspec['columns']['format'] = '^posts.format ';
-            $selectspec['source'] .= ' WHERE ^posts.acount >= # AND y.score >= # LIMIT #';
+            $where = ' WHERE ^posts.acount >= # AND y.score >= #';
+            $where.= ' AND ^posts.categoryid = (SELECT categoryid FROM ^posts WHERE postid=#)';
+            $where.= ' LIMIT #';
+            $selectspec['source'] .= $where;
             $selectspec['arguments'][] = self::MIN_ACOUNT;
             $selectspec['arguments'][] = $minscore;
+            $selectspec['arguments'][] = $questionid;
             $selectspec['arguments'][] = $list_count;
             $questions = qa_db_single_select($selectspec);
             $qa_cache->set($key, $questions, self::CACHE_EXPIRES);
@@ -54,17 +58,25 @@ class related_qs_utils {
             $where.= " OR ^posts.content like '%<img%'";
             $where.= " OR ^posts.content like '%[uploaded-video=%'";
             $where.= " OR ^posts.content like '%plain_url%')";
-            $where.= ' AND ^posts.acount >= # AND y.score >= # LIMIT #';
+            $where.= ' AND ^posts.acount >= # AND y.score >= #';
+            $where.= ' AND ^posts.categoryid = (SELECT categoryid FROM ^posts WHERE postid=#)';
+            $where.= ' LIMIT #';
             $imgselspec['source'] .= $where;
             $imgselspec['arguments'][] = self::MIN_ACOUNT_IMG;
             $imgselspec['arguments'][] = $minscore;
+            $imgselspec['arguments'][] = $questionid;
             $imgselspec['arguments'][] = self::LIST_COUNT_IMG;
 
             $otherselspec = $orgselspec;
-            $otherselspec['source'] .= ' WHERE ^posts.acount >= # AND y.score >= # LIMIT #';
+            $where2 = ' WHERE ^posts.acount >= # AND y.score >= #';
+            $where2.= ' AND ^posts.categoryid = (SELECT categoryid FROM ^posts WHERE postid=#)';
+            $where2.= ' LIMIT #';
+            $otherselspec['source'] .= $where2;
             $otherselspec['arguments'][] = self::MIN_ACOUNT;
             $otherselspec['arguments'][] = $minscore;
+            $otherselspec['arguments'][] = $questionid;
             $otherselspec['arguments'][] = self::LIST_COUNT;
+
 
             list($imgquestions, $otherquestions) = qa_db_select_with_pending(
                 $imgselspec, $otherselspec
@@ -94,9 +106,10 @@ class related_qs_utils {
             $source.= " WHERE wordid=(SELECT wordid FROM ^words ";
             $source.= " WHERE word=$ AND word=$ COLLATE utf8_bin LIMIT 1) ";
             $source.= " ORDER BY RAND() LIMIT #,#) y ON ^posts.postid=y.postid";
+            $source.= " WHERE ^posts.categoryid = (SELECT categoryid FROM ^posts WHERE postid=#)";
             $hallselspec['source'].=$source;
-            array_push($hallselspec['arguments'], $hall_tag, qa_strtolower($hall_tag), 0, self::LIST_COUNT_FAME);
-            error_log(print_r($hallselspec, true));
+            array_push($hallselspec['arguments'], $hall_tag, qa_strtolower($hall_tag), 0, self::LIST_COUNT_FAME, $questionid);
+            
             $questions = qa_db_select_with_pending($hallselspec);
             $qa_cache->set($key, $questions, self::CACHE_EXPIRES);
         }
@@ -122,10 +135,13 @@ class related_qs_utils {
             $where.= " OR ^posts.content like '%<img%'";
             $where.= " OR ^posts.content like '%[uploaded-video=%'";
             $where.= " OR ^posts.content like '%plain_url%')";
-            $where.= ' AND ^posts.acount >= # AND y.score >= # LIMIT #';
+            $where.= ' AND ^posts.acount >= # AND y.score >= #';
+            $where.= ' AND ^posts.categoryid = (SELECT categoryid FROM ^posts WHERE postid=#)';
+            $where.= ' LIMIT #';
             $imgselspec['source'] .= $where;
             $imgselspec['arguments'][] = self::MIN_ACOUNT_IMG;
             $imgselspec['arguments'][] = $minscore;
+            $imgselspec['arguments'][] = $questionid;
             $imgselspec['arguments'][] = self::LIST_COUNT_IMG;
 
             $questions = qa_db_select_with_pending($imgselspec);
