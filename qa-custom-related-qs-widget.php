@@ -7,7 +7,7 @@ class qa_custom_related_qs
     
     public function allow_template($template)
     {
-        return $template == 'question';
+        return ($template === 'question' || $template === 'amp');
     }
 
     public function allow_region($region)
@@ -32,19 +32,15 @@ class qa_custom_related_qs
             $titlehtml = qa_lang_html(count($rquestions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
             $this->output_questions_widget_side($themeobject, $titlehtml, $rquestions, 'related-q-list');
         } else {
-            $rquestions = related_qs_utils::get_related_questions_imagepost($userid, $questionid);
-            $titlehtml = qa_lang_html(count($rquestions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
-            $this->output_questions_widget_main($themeobject, $titlehtml, 'related-q-list');
-        }
+            if ($template === 'question') {
+                $rquestions = related_qs_utils::get_related_questions_imagepost($userid, $questionid);
+                $titlehtml = qa_lang_html(count($rquestions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
 
-        // おなじ季節の質問
-        // if ($region === 'side') {
-        //     $squestions = related_qs_utils::get_seasonal_questions($userid);
-        //     $titlehtml = qa_lang_html('custom_related_qs/title_seasons');
-        //     $this->output_questions_widget_side($themeobject, $titlehtml, $squestions, 'season-q-list');
-        // } else {
-        //     $this->output_questions_widget_main($themeobject, 'season-q-list');
-        // }
+                $this->output_questions_widget_main($themeobject, $titlehtml, 'related-q-list');
+            } elseif ($template === 'amp') {
+                $this->output_questions_widget_amp($themeobject, 'related-q-list', $userid, $questionid);
+            }
+        }
     }
 
 
@@ -96,6 +92,34 @@ class qa_custom_related_qs
         $themeobject->output('<div class="' . $class . '" id="'.$class.'">');
         $themeobject->output('<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>');
         $themeobject->output('<div class="ias-spinner" style="text-align:center;"><span class="mdl-spinner mdl-js-spinner is-active" style="height:20px;width:20px;"></span></div>');
+        $themeobject->output('</div>');
+    }
+
+    function output_questions_widget_amp($themeobject, $class, $userid, $questionid)
+    {
+        $themeobject->output('<div class="'.$class.'" id="'.$class.'">');
+        $questions = related_qs_utils::get_related_questions_imagepost_only($userid, $questionid);
+        if (count($questions) > 0) {
+            $titlehtml = qa_lang('main/related_qs_title');
+            $themeobject->output('<h2 class="widget-title">'.$titlehtml.'</h2>');
+            $q_list = related_qs_utils::get_q_list($questions, $userid);
+            
+            $themeobject->q_list_and_form($q_list);
+        } else {
+            $titlehtml = qa_lang('main/no_related_qs_title');
+            $themeobject->output('<h2 class="widget-title">'.$titlehtml.'</h2>');
+        }
+        $questions2 = related_qs_utils::get_related_questions_hall($userid, $questionid);
+        if (count($questions2) > 0) {
+            $titlehtml = qa_lang('custom_related_qs/fame_title');
+            $themeobject->output('<h2 class="widget-title">'.$titlehtml.'</h2>');
+            $q_list = related_qs_utils::get_q_list($questions2, $userid, false, 6);
+            
+            $themeobject->q_list_and_form($q_list);
+        } else {
+            $titlehtml = qa_lang('custom_related_qs/no_fame_title');
+            $themeobject->output('<h2 class="widget-title">'.$titlehtml.'</h2>');
+        }
         $themeobject->output('</div>');
     }
 
