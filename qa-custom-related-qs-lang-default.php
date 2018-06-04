@@ -13,6 +13,7 @@
     'hall_of_fame' => '殿堂入り',
     'fame_title' => '人気の記事',
     'no_fame_title' => '人気の記事はありません',
+    'no_answer_title' => '未回答の質問',
   );
 
 /*

@@ -8,8 +8,9 @@ class related_qs_utils {
     const MIN_ACOUNT_IMG = 2;           // 最小の回答数(画像あり)
     const MIN_ACOUNT = 3;               // 最小の回答数
     const LIST_COUNT_IMG = 5;           // 表示件数(画像あり)
-    const LIST_COUNT_FAME = 10;           // 表示件数(人気の記事)
+    const LIST_COUNT_FAME = 10;         // 表示件数(人気の記事)
     const LIST_COUNT = 15;              // 表示件数
+    const LIST_COUNT_NO_ANSWER = 2;     // 表示件数（回答のない質問）
 
     /*
      * 関連する質問
@@ -152,6 +153,33 @@ class related_qs_utils {
     }
 
     /*
+     * 一週間以内の回答がまだついていない質問
+     */
+    public static function get_no_answer_questions($userid, $questionid)
+    {
+        global $qa_cache;
+        $key = 'q-no-answer-'.$questionid;
+        if ($qa_cache->has($key)) {
+            $questions = $qa_cache->get($key);
+        } else {
+            $orgselspec = qa_db_posts_basic_selectspec($uerid, true);
+            $where = " WHERE type = 'Q'";
+            $where.= " AND ^posts.acount = 0";
+            $where.= " AND ^posts.postid != #";
+            $where.= " AND ^posts.created >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
+            $where.= " ORDER BY ^posts.created DESC";
+            $where.= " LIMIT #";
+            $orgselspec['source'] .= $where;
+            $orgselspec['arguments'][] = $questionid;
+            $orgselspec['arguments'][] = self::LIST_COUNT_NO_ANSWER;
+            $questions = qa_db_select_with_pending($orgselspec);
+            $qa_cache->set($key, $questions, self::CACHE_EXPIRES);
+        }
+        return $questions;
+
+    }
+
+    /*
      * 季節の質問
      */
     public static function get_seasonal_questions($userid = null)
@@ -271,11 +299,22 @@ class related_qs_utils {
             $titlehtml = qa_lang('main/no_related_qs_title');
             $html = '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
         }
+        $no_answer_questions = self::get_no_answer_questions($userid, $questionid);
+        if (count($no_answer_questions) > 0) {
+            $titlehtml = qa_lang('custom_related_qs/no_answer_title');
+            $html .= '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
+            $q_list = self::get_q_list($no_answer_questions, $userid, false, 6);
+            
+            ob_start();
+            $themeobject->q_list_and_form($q_list);
+            $html .= ob_get_clean();
+        }
+
         $questions2 = self::get_related_questions_hall($userid, $questionid);
         if (count($questions2) > 0) {
             $titlehtml = qa_lang('custom_related_qs/fame_title');
             $html .= '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
-            $q_list = self::get_q_list($questions2, $userid, false, 6);
+            $q_list = self::get_q_list($questions2, $userid, false, 6 + count($no_answer_questions));
             
             ob_start();
             $themeobject->q_list_and_form($q_list);
