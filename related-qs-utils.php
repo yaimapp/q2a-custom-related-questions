@@ -162,7 +162,7 @@ class related_qs_utils {
         if ($qa_cache->has($key)) {
             $questions = $qa_cache->get($key);
         } else {
-            $orgselspec = qa_db_posts_basic_selectspec($uerid, true);
+            $orgselspec = qa_db_posts_basic_selectspec($userid, true);
             $where = " WHERE type = 'Q'";
             $where.= " AND ^posts.acount = 0";
             $where.= " AND ^posts.postid != #";
