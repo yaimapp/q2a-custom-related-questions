@@ -310,6 +310,8 @@ class related_qs_utils {
             $html .= ob_get_clean();
         }
 
+        $html .= self::get_events_html();
+
         $questions2 = self::get_related_questions_hall($userid, $questionid);
         if (count($questions2) > 0) {
             $titlehtml = qa_lang('custom_related_qs/fame_title');
@@ -344,5 +346,29 @@ class related_qs_utils {
         $html .= ob_get_clean();
 
         return $html;
+    }
+
+    /*
+     * イベントのお知らせのHTML
+     */
+    public static function get_events_html()
+    {
+        $events = qa_theme_utils::get_side_events_html();
+        $title = qa_lang('material_lite_lang/side_event_notice');
+        $read_more = qa_lang('material_lite_lang/read_more2');
+        $events_html =<<<EOS
+    <div class="widget-notice mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
+        <div class="mdl-card__supporting-text">
+            <h2 class="notice-title">{$title}</h2>
+            {$events}
+            <div class="read-more">
+                <a href="/events"><span class="read-more-text">
+                {$read_more}</span><i class="material-icons">keyboard_arrow_right</i>
+                </a>
+            </div>
+        </div>
+    </div>
+EOS;
+        return $events_html;
     }
 }
