@@ -7,7 +7,7 @@ class related_qs_utils {
     const CACHE_EXPIRES = 60 * 10;      // キャッシュの保存期間
     const MIN_ACOUNT_IMG = 2;           // 最小の回答数(画像あり)
     const MIN_ACOUNT = 3;               // 最小の回答数
-    const LIST_COUNT_IMG = 5;           // 表示件数(画像あり)
+    const LIST_COUNT_IMG = 2;           // 表示件数(画像あり)
     const LIST_COUNT_FAME = 10;         // 表示件数(人気の記事)
     const LIST_COUNT = 15;              // 表示件数
     const LIST_COUNT_NO_ANSWER = 2;     // 表示件数（回答のない質問）
