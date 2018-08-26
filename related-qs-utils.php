@@ -11,6 +11,7 @@ class related_qs_utils {
     const LIST_COUNT_FAME = 10;         // 表示件数(人気の記事)
     const LIST_COUNT = 15;              // 表示件数
     const LIST_COUNT_NO_ANSWER = 2;     // 表示件数（回答のない質問）
+    const LIST_COUNT_RELATED = 5;     // 表示件数（関連する質問）
 
     /*
      * 関連する質問
@@ -82,7 +83,7 @@ class related_qs_utils {
             list($imgquestions, $otherquestions) = qa_db_select_with_pending(
                 $imgselspec, $otherselspec
             );
-            $questions = array_slice(array_replace($imgquestions, $otherquestions), 0, self::LIST_COUNT);
+            $questions = array_slice(array_replace($imgquestions, $otherquestions), 0, self::LIST_COUNT_RELATED);
             $qa_cache->set($key, $questions, self::CACHE_EXPIRES);
         }
         return $questions;
@@ -286,7 +287,7 @@ class related_qs_utils {
      */
     public static function get_related_qs_html_hall($userid, $questionid, $themeobject)
     {
-        $questions = self::get_related_questions_imagepost_only($userid, $questionid);
+        $questions = self::get_related_questions_imagepost($userid, $questionid);
         if (count($questions) > 0) {
             $titlehtml = qa_lang('main/related_qs_title');
             $html = '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
