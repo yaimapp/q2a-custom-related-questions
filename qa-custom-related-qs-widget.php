@@ -4,7 +4,7 @@ require_once CUSTOME_RELATED_DIR.'/related-qs-utils.php';
 
 class qa_custom_related_qs
 {
-    
+
     public function allow_template($template)
     {
         return ($template === 'question' || $template === 'amp');
@@ -35,6 +35,9 @@ class qa_custom_related_qs
             if ($template === 'question') {
                 $rquestions = related_qs_utils::get_related_questions_imagepost($userid, $questionid);
                 $titlehtml = qa_lang_html(count($rquestions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
+
+                $jugaiQuestions = file_get_contents(CUSTOME_RELATED_DIR . '/html/chojugai.html');
+                $themeobject->output($jugaiQuestions);
 
                 $this->output_questions_widget_main($themeobject, $titlehtml, 'related-q-list');
             } elseif ($template === 'amp') {
@@ -103,7 +106,7 @@ class qa_custom_related_qs
             $titlehtml = qa_lang('main/related_qs_title');
             $themeobject->output('<h2 class="widget-title">'.$titlehtml.'</h2>');
             $q_list = related_qs_utils::get_q_list($questions, $userid);
-            
+
             $themeobject->q_list_and_form($q_list);
         } else {
             $titlehtml = qa_lang('main/no_related_qs_title');
@@ -114,7 +117,7 @@ class qa_custom_related_qs
             $titlehtml = qa_lang('custom_related_qs/fame_title');
             $themeobject->output('<h2 class="widget-title">'.$titlehtml.'</h2>');
             $q_list = related_qs_utils::get_q_list($questions2, $userid, false, 6);
-            
+
             $themeobject->q_list_and_form($q_list);
         } else {
             $titlehtml = qa_lang('custom_related_qs/no_fame_title');
