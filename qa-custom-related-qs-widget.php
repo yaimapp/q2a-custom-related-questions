@@ -36,9 +36,6 @@ class qa_custom_related_qs
                 $rquestions = related_qs_utils::get_related_questions_imagepost($userid, $questionid);
                 $titlehtml = qa_lang_html(count($rquestions) ? 'main/related_qs_title' : 'main/no_related_qs_title');
 
-                $jugaiQuestions = file_get_contents(CUSTOME_RELATED_DIR . '/html/chojugai.html');
-                $themeobject->output($jugaiQuestions);
-
                 $this->output_questions_widget_main($themeobject, $titlehtml, 'related-q-list');
             } elseif ($template === 'amp') {
                 $this->output_questions_widget_amp($themeobject, 'related-q-list', $userid, $questionid);
