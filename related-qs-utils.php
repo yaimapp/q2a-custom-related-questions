@@ -288,10 +288,15 @@ class related_qs_utils {
     public static function get_related_qs_html_hall($userid, $questionid, $themeobject)
     {
         $html = '';
+
         // 他サイト（獣害Q&A）の投稿
-        $other_q_list_html = self::get_other_q_list_html($themeobject);
-        if (!empty($other_q_list_html)) {
-            $html .= $other_q_list_html;
+        if (qa_opt('material_lite_option_show_others')) {
+            error_log('DEBUG get_related_qa_html_hall');
+            $other_q_list_html = self::get_other_q_list_html($themeobject);
+            if (!empty($other_q_list_html)) {
+                error_log('DEBUG othe_q_list show');
+                $html .= $other_q_list_html;
+            }
         }
 
         $questions = self::get_related_questions_imagepost($userid, $questionid);
@@ -305,7 +310,7 @@ class related_qs_utils {
             $html .= ob_get_clean();
         } else {
             $titlehtml = qa_lang('main/no_related_qs_title');
-            $html = '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
+            $html .= '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
         }
         $no_answer_questions = self::get_no_answer_questions($userid, $questionid);
         if (count($no_answer_questions) > 0) {
@@ -382,9 +387,9 @@ EOS;
 
     private static function get_other_q_list_html($themeobject)
     {
-        $html = '';
         global $qa_cache;
         $key = 'other-recent-q-list-html';
+        $html = '';
         if ($qa_cache->has($key)) {
             $html = $qa_cache->get($key);
         } else {
@@ -399,8 +404,8 @@ EOS;
                 $other_q_list_html = str_replace('../', 'https://chojugai-qa.com/', $other_q_list_html);
 
                 $html = strtr($jugai_tmpl, array('^q_list_html' => $other_q_list_html));
+                // $qa_cache->set($key, $html, self::CACHE_EXPIRES);
             }
-            $qa_cache->set($key, $html, self::CACHE_EXPIRES);
         }
         return $html;
     }
