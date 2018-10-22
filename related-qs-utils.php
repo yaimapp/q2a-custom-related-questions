@@ -287,10 +287,22 @@ class related_qs_utils {
      */
     public static function get_related_qs_html_hall($userid, $questionid, $themeobject)
     {
+        $html = '';
+
+        // 他サイト（獣害Q&A）の投稿
+        if (qa_opt('material_lite_option_show_others')) {
+            error_log('DEBUG get_related_qa_html_hall');
+            $other_q_list_html = self::get_other_q_list_html($themeobject);
+            if (!empty($other_q_list_html)) {
+                error_log('DEBUG othe_q_list show');
+                $html .= $other_q_list_html;
+            }
+        }
+
         $questions = self::get_related_questions_imagepost($userid, $questionid);
         if (count($questions) > 0) {
             $titlehtml = qa_lang('main/related_qs_title');
-            $html = '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
+            $html .= '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
             $q_list = self::get_q_list($questions, $userid);
             
             ob_start();
@@ -298,7 +310,7 @@ class related_qs_utils {
             $html .= ob_get_clean();
         } else {
             $titlehtml = qa_lang('main/no_related_qs_title');
-            $html = '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
+            $html .= '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
         }
         $no_answer_questions = self::get_no_answer_questions($userid, $questionid);
         if (count($no_answer_questions) > 0) {
@@ -354,22 +366,24 @@ class related_qs_utils {
      */
     public static function get_events_html()
     {
-        $events = qa_theme_utils::get_side_events_html();
-        $title = qa_lang('material_lite_lang/side_event_notice');
-        $read_more = qa_lang('material_lite_lang/read_more2');
-        $events_html =<<<EOS
-    <div class="widget-notice mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col">
-        <div class="mdl-card__supporting-text">
-            <h2 class="notice-title">{$title}</h2>
-            {$events}
-            <div class="read-more">
-                <a href="/events"><span class="read-more-text">
-                {$read_more}</span><i class="material-icons">keyboard_arrow_right</i>
-                </a>
-            </div>
-        </div>
-    </div>
-EOS;
-        return $events_html;
+        return qa_theme_utils::get_side_events_html();
+    }
+
+    private static function get_other_q_list_html($themeobject)
+    {
+        $html = '';
+        $other_q_list = qa_theme_utils::get_other_recent_q_list_items(3);
+        if (count($other_q_list)) {
+            $jugai_tmpl = file_get_contents(CUSTOME_RELATED_DIR . '/html/chojugai.html');
+            ob_start();
+            foreach ($other_q_list as $q_item) {
+                $themeobject->q_list_item($q_item);
+            }
+            $other_q_list_html = ob_get_clean();
+            $other_q_list_html = str_replace('../', 'https://chojugai-qa.com/', $other_q_list_html);
+
+            $html = strtr($jugai_tmpl, array('^q_list_html' => $other_q_list_html));
+        }
+        return $html;
     }
 }
