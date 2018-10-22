@@ -387,25 +387,18 @@ EOS;
 
     private static function get_other_q_list_html($themeobject)
     {
-        global $qa_cache;
-        $key = 'other-recent-q-list-html';
         $html = '';
-        if ($qa_cache->has($key)) {
-            $html = $qa_cache->get($key);
-        } else {
-            $other_q_list = qa_theme_utils::get_other_recent_q_list_items(3);
-            if (count($other_q_list)) {
-                $jugai_tmpl = file_get_contents(CUSTOME_RELATED_DIR . '/html/chojugai.html');
-                ob_start();
-                foreach ($other_q_list as $q_item) {
-                    $themeobject->q_list_item($q_item);
-                }
-                $other_q_list_html = ob_get_clean();
-                $other_q_list_html = str_replace('../', 'https://chojugai-qa.com/', $other_q_list_html);
-
-                $html = strtr($jugai_tmpl, array('^q_list_html' => $other_q_list_html));
-                // $qa_cache->set($key, $html, self::CACHE_EXPIRES);
+        $other_q_list = qa_theme_utils::get_other_recent_q_list_items(3);
+        if (count($other_q_list)) {
+            $jugai_tmpl = file_get_contents(CUSTOME_RELATED_DIR . '/html/chojugai.html');
+            ob_start();
+            foreach ($other_q_list as $q_item) {
+                $themeobject->q_list_item($q_item);
             }
+            $other_q_list_html = ob_get_clean();
+            $other_q_list_html = str_replace('../', 'https://chojugai-qa.com/', $other_q_list_html);
+
+            $html = strtr($jugai_tmpl, array('^q_list_html' => $other_q_list_html));
         }
         return $html;
     }
