@@ -291,10 +291,8 @@ class related_qs_utils {
 
         // 他サイト（獣害Q&A）の投稿
         if (qa_opt('material_lite_option_show_others')) {
-            error_log('DEBUG get_related_qa_html_hall');
             $other_q_list_html = self::get_other_q_list_html($themeobject);
             if (!empty($other_q_list_html)) {
-                error_log('DEBUG othe_q_list show');
                 $html .= $other_q_list_html;
             }
         }
@@ -323,7 +321,7 @@ class related_qs_utils {
             $html .= ob_get_clean();
         }
 
-        $html .= self::get_events_html();
+        $html .= self::get_events_html($userid, $themeobject);
 
         $questions2 = self::get_related_questions_hall($userid, $questionid);
         if (count($questions2) > 0) {
@@ -364,9 +362,12 @@ class related_qs_utils {
     /*
      * イベントのお知らせのHTML
      */
-    public static function get_events_html()
+    public static function get_events_html($userid, $themeobj)
     {
-        return qa_theme_utils::get_side_events_html();
+        // return qa_theme_utils::get_side_events_html();
+        $html = qas_blog_get_event_notices_html($userid, 0, self::CACHE_EXPIRES, $themeobj);
+        $html = '<div id="events-list" class="two-columns">'.$html.'</div>';
+        return $html;
     }
 
     private static function get_other_q_list_html($themeobject)
