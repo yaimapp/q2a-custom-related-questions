@@ -323,6 +323,7 @@ class related_qs_utils {
 
         $html .= self::get_events_html($userid, $themeobject);
 
+        $themeobject->template = 'ajax-rlated-qs';
         $questions2 = self::get_related_questions_hall($userid, $questionid);
         if (count($questions2) > 0) {
             $titlehtml = qa_lang('custom_related_qs/fame_title');
