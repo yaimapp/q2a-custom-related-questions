@@ -14,6 +14,16 @@ class qa_html_theme_layer extends qa_html_theme_base
         $this->pluginurl = qa_opt('site_url').'qa-plugin/q2a-custom-related-questions/';
     }
 
+    function head_css()
+    {
+        qa_html_theme_base::head_css();
+        if ($this->template === 'question') {
+            $custom_css = $this->pluginurl.'css/related-qs.css';
+            $this->output( '<link rel="stylesheet" type="text/css" href="' . $custom_css . '"/>' );
+
+        }
+    }
+
     function body_footer()
     {
         qa_html_theme_base::body_footer();

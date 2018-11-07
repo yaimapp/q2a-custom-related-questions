@@ -1,0 +1,75 @@
+/* イベントのお知らせ部分 */
+#events-list.two-columns h2 {
+  margin-top: 0;
+  padding-left: 0;
+}
+@media (min-width: 768px) {
+  #events-list.two-columns {
+    padding: 0 8px;
+    margin-top: 10px;
+  }
+  #events-list.two-columns h2 {
+    padding: unset;
+  }
+  #events-list.two-columns .qa-q-list {
+    display: -webkit-flex;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  #events-list.two-columns .qa-q-list section {
+    width: calc(50% - 8px);
+    margin-bottom: 16px;
+  }
+  #events-list.two-columns .qa-q-list section:nth-child(odd) {
+    margin-right: 16px;
+  }
+  #events-list.two-columns .qa-q-list section .qa-q-list-item {
+    height: 100%;
+  }
+  #events-list.two-columns .qa-q-list section .qa-q-list-item .mdl-card {
+    height: 100%;
+    margin: 0;
+    width: 100%;
+  }
+}
+#events-list .qa-view-count {
+  position: absolute;
+  width: 40px;
+  left: 0;
+  top: 0;
+  line-height: 1.2;
+  color: #fff;
+  background: transparent;
+}
+#events-list .qa-view-count:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6rem 6rem 0 0;
+  border-color: rgba(255,110,64,0.7) transparent transparent transparent;
+}
+#events-list .qa-view-count.count-zero:after {
+  border-color: rgba(0,0,0,0.2) transparent transparent transparent;
+}
+#events-list .qa-view-count .qa-view-count-pad {
+  position: absolute;
+  z-index: 10;
+  top: 6px;
+  left: 8px;
+}
+#events-list .qa-view-count .qa-view-count-data {
+  position: absolute;
+  font-size: 1.5rem;
+  z-index: 10;
+  top: 24px;
+  width: 25px;
+  display: block;
+  text-align: center;
+}
