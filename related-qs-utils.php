@@ -3,7 +3,7 @@
 require_once QA_INCLUDE_DIR.'db/selects.php';
 
 class related_qs_utils {
-    
+
     const CACHE_EXPIRES = 60 * 10;      // キャッシュの保存期間
     const MIN_ACOUNT_IMG = 2;           // 最小の回答数(画像あり)
     const MIN_ACOUNT = 3;               // 最小の回答数
@@ -111,7 +111,7 @@ class related_qs_utils {
             $source.= " WHERE ^posts.categoryid = (SELECT categoryid FROM ^posts WHERE postid=#)";
             $hallselspec['source'].=$source;
             array_push($hallselspec['arguments'], $hall_tag, qa_strtolower($hall_tag), 0, self::LIST_COUNT_FAME, $questionid);
-            
+
             $questions = qa_db_select_with_pending($hallselspec);
             $qa_cache->set($key, $questions, self::CACHE_EXPIRES);
         }
@@ -147,7 +147,7 @@ class related_qs_utils {
             $imgselspec['arguments'][] = self::LIST_COUNT_IMG;
 
             $questions = qa_db_select_with_pending($imgselspec);
-            
+
             $qa_cache->set($key, $questions, self::CACHE_EXPIRES);
         }
         return $questions;
@@ -274,7 +274,7 @@ class related_qs_utils {
         }
 
         $q_list = self::get_q_list($questions, $userid);
-        
+
         ob_start();
         $themeobject->q_list_and_form($q_list);
         $html .= ob_get_clean();
@@ -302,7 +302,7 @@ class related_qs_utils {
             $titlehtml = qa_lang('main/related_qs_title');
             $html .= '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
             $q_list = self::get_q_list($questions, $userid);
-            
+
             ob_start();
             $themeobject->q_list_and_form($q_list);
             $html .= ob_get_clean();
@@ -315,7 +315,7 @@ class related_qs_utils {
             $titlehtml = qa_lang('custom_related_qs/no_answer_title');
             $html .= '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
             $q_list = self::get_q_list($no_answer_questions, $userid, false, 6);
-            
+
             ob_start();
             $themeobject->q_list_and_form($q_list);
             $html .= ob_get_clean();
@@ -329,7 +329,7 @@ class related_qs_utils {
             $titlehtml = qa_lang('custom_related_qs/fame_title');
             $html .= '<h2 style="margin-top:0; padding-top:0;">'.$titlehtml.'</h2>';
             $q_list = self::get_q_list($questions2, $userid, false, 6 + count($no_answer_questions));
-            
+
             ob_start();
             $themeobject->q_list_and_form($q_list);
             $html .= ob_get_clean();
@@ -374,7 +374,7 @@ class related_qs_utils {
     private static function get_other_q_list_html($themeobject)
     {
         $html = '';
-        $other_q_list = qa_theme_utils::get_other_recent_q_list_items(3);
+        $other_q_list = qa_theme_utils::get_other_recent_q_list_items(1, true, 'jugai');
         if (count($other_q_list)) {
             $jugai_tmpl = file_get_contents(CUSTOME_RELATED_DIR . '/html/chojugai.html');
             ob_start();
@@ -384,8 +384,24 @@ class related_qs_utils {
             $other_q_list_html = ob_get_clean();
             $other_q_list_html = str_replace('../', 'https://chojugai-qa.com/', $other_q_list_html);
 
-            $html = strtr($jugai_tmpl, array('^q_list_html' => $other_q_list_html));
+            $html  .= strtr($jugai_tmpl, array('^q_list_html' => $other_q_list_html));
         }
+
+        $other_q_list = qa_theme_utils::get_other_recent_q_list_items(1, true, 'tsurinowa');
+        if (count($other_q_list)) {
+            $jugai_tmpl = file_get_contents(CUSTOME_RELATED_DIR . '/html/trurinowa.html');
+            ob_start();
+            foreach ($other_q_list as $q_item) {
+                $themeobject->q_list_item($q_item);
+            }
+            $other_q_list_html = ob_get_clean();
+            $other_q_list_html = str_replace('../', 'https://tsurinowa.com/', $other_q_list_html);
+
+            $html .= strtr($jugai_tmpl, array('^q_list_html' => $other_q_list_html));
+        }
+
+
+
         return $html;
     }
 }
