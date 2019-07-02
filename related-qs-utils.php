@@ -387,7 +387,6 @@ class related_qs_utils {
             $html  .= strtr($jugai_tmpl, array('^q_list_html' => $other_q_list_html));
         }
 
-/*
         $other_q_list = qa_theme_utils::get_other_recent_q_list_items(1, true, 'tsurinowa');
         if (count($other_q_list)) {
             $jugai_tmpl = file_get_contents(CUSTOME_RELATED_DIR . '/html/trurinowa.html');
@@ -400,9 +399,6 @@ class related_qs_utils {
 
             $html .= strtr($jugai_tmpl, array('^q_list_html' => $other_q_list_html));
         }
-*/
-
-
 
         return $html;
     }
