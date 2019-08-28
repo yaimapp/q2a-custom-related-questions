@@ -24,6 +24,11 @@ qa_register_plugin_layer('qa-custom-related-qs-layer.php', 'Custom Related Quest
 qa_register_plugin_phrases('qa-custom-related-qs-lang-*.php', 'custom_related_qs');
 // page
 qa_register_plugin_module('page', 'qa-custom-related-qs-response.php', 'qa_crq_page', 'Related Questions Ajax Page');
+// admin
+qa_register_plugin_module('module',
+'qa-custom-related-qs-admin.php',
+'qa_custom_related_qs_admin',
+'Custom Related Questions');
 
 @define( 'CUSTOME_RELATED_DIR', dirname( __FILE__ ) );
 
