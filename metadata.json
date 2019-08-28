@@ -1,0 +1,12 @@
+{
+	"name": "Q2A Custom Related Questions",
+	"uri": "https://github.com/yshiga/q2a-custom-related-questions",
+	"description": "Customize related questions widget",
+	"version": "1.0.0",
+	"date": "2016-10-18",
+	"author": "yshiga",
+	"author_uri": "http://38qa.net",
+	"license": "GPLv2",
+	"update_uri": "",
+	"min_q2a": "1.7"
+}
