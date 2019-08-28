@@ -14,6 +14,10 @@
     'fame_title' => '人気の記事',
     'no_fame_title' => '人気の記事はありません',
     'no_answer_title' => '未回答の質問',
+    // admin option
+    'min_acount_img' => '画像があるときの回答数:',
+    'min_acount'     => '画像がないときの回答数:',
+    'morethan'       => '以上',
   );
 
 /*

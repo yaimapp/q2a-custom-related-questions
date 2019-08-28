@@ -35,14 +35,16 @@ class qa_custom_related_qs_admin
             'label' => qa_lang('custom_related_qs/min_acount_img'),
             'tags' => 'NAME="related_qs_min_acount_img"',
             'value' => qa_opt('related_qs_min_acount_img'),
-            'type' => 'text',
+            'type' => 'number',
+            'suffix' => qa_lang('custom_related_qs/morethan'),
         );
 
         $fields[] = array(
             'label' => qa_lang('custom_related_qs/min_acount'),
             'tags' => 'NAME="related_qs_min_acount"',
             'value' => qa_opt('related_qs_min_acount'),
-            'type' => 'text',
+            'type' => 'number',
+            'suffix' => qa_lang('custom_related_qs/morethan'),
         );
         return array(
             'ok' => ($ok && !isset($error)) ? $ok : null,
