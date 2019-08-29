@@ -401,6 +401,23 @@ class related_qs_utils {
             $html .= strtr($jugai_tmpl, array('^q_list_html' => $other_q_list_html));
         }
 */
+        // 移住者Q&Aの最新質問
+        $userid = qa_get_logged_in_userid();
+        $profile = qa_theme_utils::getUserprofile($userid);
+        $categorytitle = $profile['location'];
+
+        $iju_q_list = qa_theme_utils::get_other_recent_q_list_items(1, true, 'iju', $categorytitle);
+        if (count($iju_q_list)) {
+            $iju_tmpl = file_get_contents(CUSTOME_RELATED_DIR . '/html/iju.html');
+            ob_start();
+            foreach ($iju_q_list as $q_item) {
+                $themeobject->q_list_item($q_item);
+            }
+            $iju_q_list_html = ob_get_clean();
+            $iju_q_list_html = str_replace('../', 'https://iju-map.jp/', $iju_q_list_html);
+
+            $html  .= strtr($iju_tmpl, array('^q_list_html' => $iju_q_list_html));
+        }
 
         return $html;
     }
