@@ -16,18 +16,13 @@ class qa_custom_related_qs_admin
         }
     }
 
-    public function allow_template($template)
-    {
-        return $template !== 'admin';
-    }
-
     public function admin_form(&$qa_content)
     {
         // process the admin form if admin hit Save-Changes-button
         $ok = null;
         if (qa_clicked('qa_custom_related_qs_save')) {
-            qa_opt('related_qs_min_acount_img', qa_post('related_qs_min_acount_img'));
-            qa_opt('related_qs_min_acount', qa_post('related_qs_min_acount'));
+            qa_opt('related_qs_min_acount_img', qa_post_text('related_qs_min_acount_img'));
+            qa_opt('related_qs_min_acount', qa_post_text('related_qs_min_acount'));
 
             $ok = qa_lang('admin/options_saved');
         }

@@ -23,6 +23,7 @@ class related_qs_utils {
         if($qa_cache->has($key)) {
             $questions = $qa_cache->get($key);
         } else {
+            $minacount = is_numeric(qa_opt('related_qs_min_acount')) ? qa_opt('related_qs_min_acount') : self::MIN_ACOUNT;
             $selectspec = qa_db_related_qs_selectspec($userid, $questionid);
             $minscore = qa_match_to_min_score(qa_opt('match_related_qs'));
             $selectspec['columns']['content'] = '^posts.content ';
@@ -31,7 +32,7 @@ class related_qs_utils {
             $where.= ' AND ^posts.categoryid = (SELECT categoryid FROM ^posts WHERE postid=#)';
             $where.= ' LIMIT #';
             $selectspec['source'] .= $where;
-            $selectspec['arguments'][] = self::MIN_ACOUNT;
+            $selectspec['arguments'][] = $minacount;
             $selectspec['arguments'][] = $minscore;
             $selectspec['arguments'][] = $questionid;
             $selectspec['arguments'][] = $list_count;
@@ -51,6 +52,8 @@ class related_qs_utils {
         if($qa_cache->has($key)) {
             $questions = $qa_cache->get($key);
         } else {
+            $minacount = is_numeric(qa_opt('related_qs_min_acount')) ? qa_opt('related_qs_min_acount') : self::MIN_ACOUNT;
+            $minacount_img = is_numeric(qa_opt('related_qs_min_acount_img')) ? qa_opt('related_qs_min_acount_img') : self::MIN_ACOUNT_IMG;
             $orgselspec = qa_db_related_qs_selectspec($userid, $questionid);
             $minscore = qa_match_to_min_score(qa_opt('match_related_qs'));
             $orgselspec['columns']['content'] = '^posts.content ';
@@ -64,7 +67,7 @@ class related_qs_utils {
             $where.= ' AND ^posts.categoryid = (SELECT categoryid FROM ^posts WHERE postid=#)';
             $where.= ' LIMIT #';
             $imgselspec['source'] .= $where;
-            $imgselspec['arguments'][] = self::MIN_ACOUNT_IMG;
+            $imgselspec['arguments'][] = $minacount_img;
             $imgselspec['arguments'][] = $minscore;
             $imgselspec['arguments'][] = $questionid;
             $imgselspec['arguments'][] = self::LIST_COUNT_IMG;
@@ -74,7 +77,7 @@ class related_qs_utils {
             $where2.= ' AND ^posts.categoryid = (SELECT categoryid FROM ^posts WHERE postid=#)';
             $where2.= ' LIMIT #';
             $otherselspec['source'] .= $where2;
-            $otherselspec['arguments'][] = self::MIN_ACOUNT;
+            $otherselspec['arguments'][] = $minacount;
             $otherselspec['arguments'][] = $minscore;
             $otherselspec['arguments'][] = $questionid;
             $otherselspec['arguments'][] = self::LIST_COUNT;
@@ -128,6 +131,7 @@ class related_qs_utils {
         if($qa_cache->has($key)) {
             $questions = $qa_cache->get($key);
         } else {
+            $minacount_img = is_numeric(qa_opt('related_qs_min_acount_img')) ? qa_opt('related_qs_min_acount_img') : self::MIN_ACOUNT_IMG;
             $orgselspec = qa_db_related_qs_selectspec($userid, $questionid);
             $minscore = qa_match_to_min_score(qa_opt('match_related_qs'));
             $orgselspec['columns']['content'] = '^posts.content ';
@@ -141,7 +145,7 @@ class related_qs_utils {
             $where.= ' AND ^posts.categoryid = (SELECT categoryid FROM ^posts WHERE postid=#)';
             $where.= ' LIMIT #';
             $imgselspec['source'] .= $where;
-            $imgselspec['arguments'][] = self::MIN_ACOUNT_IMG;
+            $imgselspec['arguments'][] = $minacount_img;
             $imgselspec['arguments'][] = $minscore;
             $imgselspec['arguments'][] = $questionid;
             $imgselspec['arguments'][] = self::LIST_COUNT_IMG;
